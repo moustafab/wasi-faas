@@ -18,4 +18,7 @@ The worker has a relatively straightforward job:
 - [X] Listen for incoming requests from the control-plane for various handlers
 - [X] Execute the WebAssembly function with the provided input and return the output
 
+## References
+
+[wasmtime](https://docs.wasmtime.dev/)
 

@@ -9,7 +9,7 @@ use axum::{
 };
 
 use api::worker::{Worker, WorkerAddress, WorkerId, WorkerStatus};
-use tracing::instrument;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
 pub struct WorkerStore {
@@ -66,12 +66,18 @@ impl WorkerStore {
 
 // FIXME: fix error handling to return 404 when worker not found
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct WorkerQuery {
+    status: Option<WorkerStatus>,
+}
+
 #[tracing::instrument(skip(store))]
 pub async fn list_workers(
     State(store): State<WorkerStore>,
-    maybe_status: Option<Query<WorkerStatus>>,
+    Query(query): Query<WorkerQuery>,
 ) -> Json<Vec<Worker>> {
-    Json(store.list(maybe_status.map(|Query(status)| status).as_ref()))
+    tracing::info!("listing workers");
+    Json(store.list(query.status.as_ref()))
 }
 
 #[tracing::instrument(skip(store))]
