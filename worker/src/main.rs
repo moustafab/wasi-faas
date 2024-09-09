@@ -60,10 +60,11 @@ async fn main() -> anyhow::Result<()> {
 
     let function_executor_api = Router::new()
         .route("/hello", post(executor::execute_hello))
+        .route("/add", post(executor::execute_add))
+        .route("/sub", post(executor::execute_sub))
+        .route("/mul", post(executor::execute_mul))
+        .route("/div", post(executor::execute_div))
         .with_state((function_map, engine));
-    // .route("/add", post(functions::execute_add))
-    // .route("/sub", post(functions::execute_sub))
-    // .route("/mul", post(functions::execute_mul));
 
     let app = Router::new().nest("/execute", function_executor_api);
 

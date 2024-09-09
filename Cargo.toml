@@ -3,7 +3,13 @@ resolver = "2"
 
 members = ["control-plane", "worker", "api"]
 
-exclude = ["functions-sample/hello"]
+exclude = [
+  "functions-sample/hello",
+  "functions-sample/add",
+  "functions-sample/sub",
+  "functions-sample/mul",
+  "functions-sample/div",
+]
 
 [workspace.dependencies]
 api = { path = "./api" }
@@ -14,7 +20,7 @@ chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 derive_more = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", features = ["json"] }
-serde = "1"
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 tracing = "0.1"

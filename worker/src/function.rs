@@ -2,8 +2,9 @@ use std::{collections::BTreeMap, path::PathBuf};
 
 use wasmtime::Module;
 
-const FUNCTIONS: [&str; 1] = ["hello"];
+const FUNCTIONS: [&str; 5] = ["hello", "add", "sub", "mul", "div"];
 
+// TODO: in theory this would load from a set of addresses based on a list of assigned functions (depending on capacity etc)
 pub async fn load_functions(
     function_dir: &PathBuf,
     engine: &wasmtime::Engine,
