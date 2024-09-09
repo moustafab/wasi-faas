@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::{Id, TimeStamp};
 
-#[derive(Serialize, Deserialize, Clone, Default, Debug)]
+#[derive(Serialize, Deserialize, Clone, Default, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum WorkerStatus {
     #[default]
@@ -61,5 +61,11 @@ impl Worker {
     }
     pub fn update_status(&mut self, status: WorkerStatus) {
         self.status = status;
+    }
+    pub fn status(&self) -> &WorkerStatus {
+        &self.status
+    }
+    pub fn address(&self) -> &WorkerAddress {
+        &self.address
     }
 }

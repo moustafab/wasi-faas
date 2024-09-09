@@ -4,6 +4,7 @@ use axum::{
 };
 use workers::WorkerStore;
 
+mod api_gateway;
 mod workers;
 
 #[tokio::main]
@@ -18,12 +19,17 @@ async fn main() -> Result<(), std::io::Error> {
                 .patch(workers::update_worker)
                 .delete(workers::delete_worker),
         )
-        .with_state(worker_store);
+        .with_state(worker_store.clone());
 
     // proxy calls to the first available worker in api-gateway
+    let api_gateway = Router::new()
+        .route("/:function", post(api_gateway::proxy))
+        .with_state(worker_store);
 
     // TODO: in theory we'd be able to have an api for registering functions and their associated paths but for simplicity we'll just hardcode them
-    let app = Router::new().nest("/workers", workers_api);
+    let app = Router::new()
+        .nest("/workers", workers_api)
+        .nest("/api", api_gateway);
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await

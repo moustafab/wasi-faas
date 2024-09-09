@@ -15,7 +15,7 @@ impl Id {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Display, Debug)]
 pub struct JsonData(Value);
 
 impl TryFrom<Vec<u8>> for JsonData {

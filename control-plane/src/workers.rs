@@ -4,11 +4,11 @@ use std::{
 };
 
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     Json,
 };
 
-use api::worker::{Worker, WorkerAddress, WorkerId};
+use api::worker::{Worker, WorkerAddress, WorkerId, WorkerStatus};
 use tracing::instrument;
 
 #[derive(Clone)]
@@ -25,8 +25,20 @@ impl WorkerStore {
     pub fn insert(&mut self, worker: Worker) {
         self.inner.lock().unwrap().insert(*worker.id(), worker);
     }
-    pub fn list(&self) -> Vec<Worker> {
-        self.inner.lock().unwrap().values().cloned().collect()
+    pub fn list(&self, status: Option<&WorkerStatus>) -> Vec<Worker> {
+        self.inner
+            .lock()
+            .unwrap()
+            .values()
+            .filter(|w| {
+                if let Some(status) = status {
+                    w.status() == status
+                } else {
+                    true
+                }
+            })
+            .cloned()
+            .collect()
     }
     pub fn get(&self, id: WorkerId) -> Option<Worker> {
         self.inner.lock().unwrap().get(&id).cloned()
@@ -55,8 +67,11 @@ impl WorkerStore {
 // FIXME: fix error handling to return 404 when worker not found
 
 #[tracing::instrument(skip(store))]
-pub async fn list_workers(State(store): State<WorkerStore>) -> Json<Vec<Worker>> {
-    Json(store.list())
+pub async fn list_workers(
+    State(store): State<WorkerStore>,
+    maybe_status: Option<Query<WorkerStatus>>,
+) -> Json<Vec<Worker>> {
+    Json(store.list(maybe_status.map(|Query(status)| status).as_ref()))
 }
 
 #[tracing::instrument(skip(store))]

@@ -428,6 +428,7 @@ dependencies = [
  "anyhow",
  "api",
  "axum",
+ "reqwest",
  "tokio",
  "tracing",
  "tracing-subscriber",
